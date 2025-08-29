@@ -31,6 +31,14 @@ Please follow these standards
 - No `@[required]` attribute in struct definitions.
 - Use `arrays.concat` instead of `<<`.
 
+### veb
+
+- `object_` files contain request/response data structures and related functions.
+- `route_` files define endpoints and validate request inputs.
+- `conduit_` files manage transactions and prepare responses.
+- `suite_` files aggregate related database operations.
+- `model_` files define indeividual database operations.
+
 ### FirebirdSQL
 
 - Uppercase for keywords, data types. Lowercase all other identifiers.
@@ -38,4 +46,4 @@ Please follow these standards
 - Use `CHAR` for strings with expected exact lengths.
 - Use `VARCHAR` for strings with expected maximum lengths, for strings with default values, and for 
   strings that are in an `INDEX` or `UNIQUE` constraint.
-- Use `TEXT` for unknown-length strings.
+- Use `BLOB SUB_TYPE TEXT` for unknown-length strings.

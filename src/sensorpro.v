@@ -7,9 +7,6 @@ import time
 // https://sensorpro.eu/
 // https://e.sensorpro.net/
 // https://sensorpro.net/api/
-
-const api_root = 'https://apinie.sensorpro.net/'
-
 pub struct SensorproOptions {
 	api_key      string
 	organization string
@@ -57,8 +54,8 @@ struct SensorproAuthSigninResponse {
 	token        string
 }
 
-fn (s Sensorpro) auth_sign_in() !SensorproAuthSigninResponse {
-	endpoint := '${api_root}auth/sys/signin'
+fn (mut s Sensorpro) auth_sign_in() ! {
+	endpoint := 'https://apinie.sensorpro.net/auth/sys/signin'
 	header := 'x-apikey'
 	body := SensorproAuthSignin{
 		organization: s.organization
@@ -69,13 +66,16 @@ fn (s Sensorpro) auth_sign_in() !SensorproAuthSigninResponse {
 	request.add_header(http.CommonHeader.content_type, 'application/json')
 	request.add_custom_header(header, s.api_key)!
 	response := request.do()!
-	return json.decode(SensorproAuthSigninResponse, response.body)!
+	data := json.decode(SensorproAuthSigninResponse, response.body)!
+	s.expires_in = data.expires_in
+	s.api_endpoint = data.api_endpoint
+	s.token = data.token
 }
 
-fn (s Sensorpro) auth_log_off() ! {
-	endpoint := '${api_root}auth/sys/logoff/${s.token}'
+fn (mut s Sensorpro) auth_log_off() ! {
+	endpoint := '${s.api_endpoint}auth/sys/logoff/${s.token}'
 	mut request := http.new_request(http.Method.post, endpoint, '')
 	request.add_header(http.CommonHeader.content_type, 'application/json')
 	request.do()!
-	return
+	s.expires_in = time.now()
 }
